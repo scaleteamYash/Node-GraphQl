@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-express";
 
 const subject = gql`
+  scalar Int
+
   type SubjectModel {
     id: ID
     subjectName: String

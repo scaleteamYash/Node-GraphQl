@@ -47,4 +47,22 @@ export default {
       throw new Error(`You Don't have Permission to Access!`);
     }
   },
+
+  accessFacultyOrAdmin: async (parent, args, loginUser, info) => {
+    try {
+      const findFacultyRole = await Role?.findOne({ roleName: "faculty" });
+      const findAdminRole = await Role?.findOne({ roleName: "admin" });
+
+      if (
+        findFacultyRole?._id?.toString() === loginUser?.loginUser?.role ||
+        findAdminRole?._id?.toString() === loginUser?.loginUser?.role
+      ) {
+        skip;
+      } else {
+        throw new Error(`You Don't have Permission to Access!`);
+      }
+    } catch {
+      throw new Error(`You Don't have Permission to Access!`);
+    }
+  },
 };

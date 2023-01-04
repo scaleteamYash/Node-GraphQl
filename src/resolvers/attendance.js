@@ -45,7 +45,7 @@ const attendanceType = {
       access.accessFaculty,
       async (parent, args, loginUser, info) => {
         try {
-          const getAttendance = await Attendance?.findOne( {
+          const getAttendance = await Attendance?.findOne({
             _id: args?.id,
             isDeleted: false,
             faculty: loginUser?.loginUser?._id,
@@ -102,10 +102,10 @@ const attendanceType = {
           const getAttendance = await Attendance?.find({
             _id: args?.id,
             isDeleted: false,
-            faculty: loginUser?.loginUser?._id,
+            // faculty: loginUser?.loginUser?._id,
           });
 
-          if (getAttendance?.length > 0) {
+          if (getAttendance) {
             const addAttendance = await Attendance?.findByIdAndUpdate(
               args.id,
               {
@@ -137,9 +137,10 @@ const attendanceType = {
             isDeleted: false,
             faculty: loginUser?.loginUser?._id,
           });
-          if (getAttendance?.length > 0) {
+          if (getAttendance) {
             const updateAttendance = await Attendance?.findOneAndUpdate(
-              { _id: args?.id, students: { $elemMatch: { _id: args?.sid } } },
+              // { _id: args?.id, students: { $elemMatch: { _id: args?.sid } } },
+              { _id: args?.id, "students.student": args?.sid },
               {
                 $set: {
                   "students.$.status": args?.updateattendancemodel?.status,
@@ -159,19 +160,16 @@ const attendanceType = {
     deleteAttendance: combineResolvers(
       access.accessFaculty,
       async (parent, args, loginUser, info) => {
+        console.log("🚀 ~ args", args.id)
         try {
           const getAttendance = await Attendance?.find({
             _id: args?.id,
             isDeleted: false,
             faculty: loginUser?.loginUser?._id,
           });
-          if (getAttendance?.length > 0) {
-            const deleteAttendance = await Attendance?.findByIdAndUpdate(
-              args.id,
-              { $set: { isDeleted: true } },
-              { new: true }
-            );
-            return deleteAttendance;
+          if (getAttendance) {
+            const abd = await Attendance.findOneAndUpdate({ id: args.id }, { isDeleted: true }, { new: true })
+            return ("Delete Successfully");
           } else {
             throw new Error("Data is Not Found");
           }
@@ -180,6 +178,26 @@ const attendanceType = {
         }
       }
     ),
+    // deleteAttendance: combineResolvers(
+    //   access.accessFaculty,
+    //   async (parent, args, loginUser, info) => {
+
+    //     const deleteAttendance = await Attendance?.findOne({
+    //       _id: args?.id,
+    //       isDeleted: false,
+    //       faculty: loginUser?.loginUser?._id,
+    //     });
+    //     if (deleteAttendance) {
+    //       deleteAttendance.isDeleted = true;
+    //       await deleteAttendance?.save();
+    //       return true;
+    //     } else {
+    //       return false;
+
+    //     }
+    //   }
+
+    // )
   },
 };
 export default attendanceType;

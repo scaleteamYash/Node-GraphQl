@@ -5,7 +5,8 @@ const subjectSchema = new mongoose.Schema({
   subjectCode: { type: Number, required: true, trim: true },
   isActive: { type: Boolean, default: false },
   isDeleted: { type: Boolean, default: false },
-});
+},
+  { timestamps: true });
 
 const subjectModel = mongoose.model("Subjects", subjectSchema);
 

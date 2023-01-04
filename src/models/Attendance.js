@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const attendanceSchema = new mongoose.Schema(
   {
-    faculty: { type: mongoose.Schema.Types.ObjectId,ref:"Users" },
+    faculty: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
     students: [
       {
-        student: { type: mongoose.Schema.Types.ObjectId,ref:"Users" },
+        student: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
         status: { type: Boolean, default: false },
       },
     ],

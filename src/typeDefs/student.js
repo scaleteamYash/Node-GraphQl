@@ -22,7 +22,6 @@ const studentType = gql`
     lastName: String
     email: String
     gender: String
-    role: roleModel
     subject: SubjectModel
     enrno: String
   }

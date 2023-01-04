@@ -6,7 +6,7 @@ const subjectType = {
   Query: {
     getAllSubject: combineResolvers(access.accessAdmin, async () => {
       try {
-        const getAllSubject = await Subject?.find({ isDeleted: false });
+        const getAllSubject = await Subject?.find({ isDeleted: false }).sort({ createdAt: -1 })
         if (getAllSubject?.length > 0) {
           return getAllSubject;
         } else {
@@ -56,6 +56,7 @@ const subjectType = {
     updateSubject: combineResolvers(
       access.accessAdmin,
       async (parent, args, context, info) => {
+
         try {
           const subjectCode = args.subjectmodel.subjectCode;
           const checkSubject = await Subject?.findOne({ subjectCode });
@@ -91,7 +92,7 @@ const subjectType = {
             { $set: { isDeleted: true } },
             { new: true }
           );
-          return deleteSubject;
+          return ("delete Successfully")
         } catch (error) {
           throw new Error("Error in deleteSubject", error);
         }

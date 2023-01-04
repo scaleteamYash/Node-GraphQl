@@ -4,10 +4,11 @@ import jwt from "jsonwebtoken";
 const loginType = {
   Mutation: {
     loginUser: async (parent, args, context, info) => {
+    
       try {
         const email = args?.loginmodel?.email;
         const password = args?.loginmodel?.password;
-        const loginUser = await User?.findOne({ email: email });
+        const loginUser = await User?.findOne({ email: email })
         if (loginUser?.email) {
           const match = await loginUser?.validatePassword(password);
           if (match) {

@@ -5,13 +5,13 @@ import access from "../middlewares/accessMiddlewares";
 
 const facultyType = {
   Query: {
-    getAllFaculty: combineResolvers(access.accessAdmin, async () => {
+    getAllFaculty: combineResolvers(access.accessFacultyOrAdmin, async () => {
       try {
         const faculty = await Role?.findOne({ roleName: "faculty" });
         const getAllFaculty = await User?.find({
           isDeleted: false,
           role: faculty?._id,
-        }).populate([{ path: "class" }, { path: "subject" }, { path: "role" }]);
+        }).sort({ createdAt: -1 }).populate([{ path: "class" }, { path: "subject" }, { path: "role" }]);
 
         if (getAllFaculty) {
           return getAllFaculty;
@@ -68,34 +68,37 @@ const facultyType = {
         }
       }
     ),
-    updateFaculty: combineResolvers(
-      access.accessAdmin,
-      async (parent, args, context, info) => {
-        try {
-          const email = args?.facultymodel?.email;
-          const checkEmail = await User?.findOne({ email });
-          const getFaculty = await User?.find({
-            _id: args?.id,
-            isDeleted: false,
-          });
-          if (getFaculty?.length > 0) {
-            if (!checkEmail || checkEmail?._id?.toString() === args?.id) {
-              const updateFaculty = await User?.findByIdAndUpdate(
-                args?.id,
-                args?.facultymodel,
-                { new: true }
-              );
-              return updateFaculty;
-            } else {
-              throw new Error("Email already exists");
-            }
-          } else {
-            throw new Error("Data is Not Found");
-          }
-        } catch (error) {
-          throw new Error(error?.message);
-        }
-      }
+    updateFaculty: combineResolvers(access.accessAdmin, async (parent, args, context, info) => {
+      return new Promise((resolve, reject) => {
+        User?.findByIdAndUpdate(args?.id, { ...args?.facultyupdatemodel }, { new: true }).then((res) => {
+          resolve(res)
+        }).catch((error) => {
+          reject(error)
+        })
+      })
+      // try {
+      //   const email = args?.facultymodel?.email;
+      //   const checkEmail = await User?.findOne({ email });
+      //   const getFaculty = await User?.find({ _id: args?.id,isDeleted: false});
+      //   if (getFaculty?.length > 0) {
+      //     if (!checkEmail || checkEmail?._id?.toString() === args?.id) {
+      //       const updateFaculty = await User?.findByIdAndUpdate(
+      //         args?.id,
+      //         args?.facultymodel,
+      //         { new: true }
+      //         );
+      //         console.log("🚀 ~ updateFaculty", updateFaculty)
+      //       return updateFaculty;
+      //     } else {
+      //       throw new Error("Email already exists");
+      //     }
+      //   } else {
+      //     throw new Error("Data is Not Found");
+      //   }
+      // } catch (error) {
+      //   throw new Error(error?.message);
+      // }
+    }
     ),
     deleteFaculty: combineResolvers(
       access.accessAdmin,

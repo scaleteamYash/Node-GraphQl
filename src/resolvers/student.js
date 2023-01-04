@@ -9,14 +9,15 @@ const studentType = {
       access.accessFaculty,
       async (parent, args, loginUser, info) => {
         try {
-          const student = await Role?.findOne({ roleName: "student" });
+          const student = await Role?.findOne({ roleName: "student" })
           const getAllStudent = await User?.find({
             isDeleted: false,
             role: student?._id,
             subject: loginUser?.loginUser?.subject,
           }).populate([{ path: "subject" }, { path: "role" }]);
 
-          if (getAllStudent?.length > 0) {
+
+          if (getAllStudent) {
             return getAllStudent;
           } else {
             throw new Error("Data is Not Found");
@@ -73,31 +74,39 @@ const studentType = {
     updateStudent: combineResolvers(
       access.accessFaculty,
       async (parent, args, loginUser, info) => {
-        try {
-          const email = args?.studentmodel?.email;
-          const checkEmail = await User?.findOne({ email });
-          const getStudent = await User?.find({
-            _id: args?.id,
-            isDeleted: false,
-            subject: loginUser?.loginUser?.subject,
-          });
-          if (getStudent) {
-            if (!checkEmail || checkEmail?._id?.toString() === args?.id) {
-              const update_student = await User?.findByIdAndUpdate(
-                args?.id,
-                args?.studentmodel,
-                { new: true }
-              );
-              return update_student;
-            } else {
-              throw new Error("Email already exists");
-            }
-          } else {
-            throw new Error("Data is Not Found");
-          }
-        } catch (error) {
-          throw new Error(error?.message);
-        }
+
+        return new Promise((resolve, reject) => {
+          User?.findByIdAndUpdate(args?.id, { ...args?.studentupdatemodel }, { new: true }).then((res) => {
+            resolve(res)
+          }).catch((error) => {
+            reject(error)
+          })
+        })
+        //   try {
+        //     const email = args?.studentmodel?.email;
+        //     const checkEmail = await User?.findOne({ email });
+        //     const getStudent = await User?.find({
+        //       _id: args?.id,
+        //       isDeleted: false,
+        //       subject: loginUser?.loginUser?.subject,
+        //     });
+        //     if (getStudent) {
+        //       if (!checkEmail || checkEmail?._id?.toString() === args?.id) {
+        //         const update_student = await User?.findByIdAndUpdate(
+        //           args?.id,
+        //           args?.studentmodel,
+        //           { new: true }
+        //         );
+        //         return update_student;
+        //       } else {
+        //         throw new Error("Email already exists");
+        //       }
+        //     } else {
+        //       throw new Error("Data is Not Found");
+        //     }
+        //   } catch (error) {
+        //     throw new Error(error?.message);
+        //   }
       }
     ),
     deleteStudent: combineResolvers(
@@ -115,7 +124,7 @@ const studentType = {
               { $set: { isDeleted: true } },
               { new: true }
             );
-            return deleteStudent;
+            return ("delete Successfully")
           } else {
             throw new Error("Student is Not Found!");
           }

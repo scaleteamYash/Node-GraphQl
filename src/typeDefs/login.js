@@ -12,7 +12,8 @@ const loginType = gql`
     class: ID
     subject: ID
     enrno: String
-    token: String
+  token: String
+
   }
 
   input loginInput {

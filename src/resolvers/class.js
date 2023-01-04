@@ -7,8 +7,8 @@ const classType = {
   Query: {
     getAllClass: combineResolvers(access.accessAdmin, async () => {
       try {
-        const getAllClass = await ClassModel?.find({ isDeleted: false });
-        if (getAllClass) {
+        const getAllClass = await ClassModel?.find({ isDeleted: false }).sort({ createdAt: -1 })
+        if (getAllClass?.length > 0) {
           return getAllClass;
         } else {
           throw new Error("Data is Not Found");
@@ -41,10 +41,12 @@ const classType = {
       access.accessAdmin,
       async (parent, args, context, info) => {
         try {
-          const className = args?.Classmodel?.className;
+          const className = args?.classmodel?.className;
+
           const checkClass = await ClassModel?.findOne({ className });
           if (!checkClass) {
-            const createClass = await ClassModel?.create(args?.Classmodel);
+            const createClass = await ClassModel?.create(args?.classmodel);
+
             return createClass;
           } else {
             throw new Error("Class already exists");
@@ -58,7 +60,7 @@ const classType = {
       access.accessAdmin,
       async (parent, args, context, info) => {
         try {
-          const className = args?.Classmodel?.className;
+          const className = args?.classmodel?.className;
           const checkClass = await ClassModel?.findOne({ className });
           const getClass = await ClassModel?.find({
             _id: args?.id,
@@ -68,7 +70,7 @@ const classType = {
             if (!checkClass || checkClass?._id?.toString() === args?.id) {
               const updateClass = await ClassModel?.findByIdAndUpdate(
                 args?.id,
-                args?.Classmodel,
+                args?.classmodel,
                 { new: true }
               );
               return updateClass;
@@ -92,12 +94,13 @@ const classType = {
             { $set: { isDeleted: true } },
             { new: true }
           );
-          return deleteClass;
+          return ("delete Successfully")
         } catch (error) {
           throw new Error(error?.message);
         }
       }
     ),
+
   },
 };
 export default classType;

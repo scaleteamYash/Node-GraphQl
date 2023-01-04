@@ -4,7 +4,8 @@ const classSchema = new mongoose.Schema({
   className: { type: String, required: true, trim: true },
   isActive: { type: Boolean, default: false },
   isDeleted: { type: Boolean, default: false },
-});
+},
+  { timestamps: true });
 
 const classModel = mongoose.model("Classes", classSchema);
 
