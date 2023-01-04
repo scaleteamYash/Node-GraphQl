@@ -41,10 +41,10 @@ export default {
       ) {
         skip;
       } else {
-        throw new Error(`You Don't have Permission to Access!`);
+        throw new Error(`You have Not Permission to Allow!`);
       }
     } catch {
-      throw new Error(`You Don't have Permission to Access!`);
+      throw new Error(`You have Not Permission to Allow!`);
     }
   },
 
